@@ -2,8 +2,11 @@ import React, { useState, useRef } from "react";
 import { validateEmailPassword } from "../utils/validateEmailPassword.js";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../utils/firebase.js";
+import { useNavigate } from "react-router-dom";
+import Header from "./Header.jsx";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [isSignIn, setSignIn] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -15,11 +18,10 @@ const Login = () => {
       email.current.value,
       password.current.value
     );
-    // console.log(val);
+
     setErrorMessage(val);
 
     if(val) return;
-
     // Sign up user
     if (!isSignIn) {
       createUserWithEmailAndPassword(
@@ -29,7 +31,8 @@ const Login = () => {
       )
         .then((userCredential) => {
           const user = userCredential.user;
-          console.log(user);
+          // console.log(user);
+          navigate("/browse");
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -41,7 +44,8 @@ const Login = () => {
       signInWithEmailAndPassword(auth, email.current.value, password.current.value)
         .then((userCredential) => {
           const user = userCredential.user;
-          console.log(user);
+          // console.log(user);
+          navigate("/browse");
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -56,7 +60,16 @@ const Login = () => {
   };
 
   return (
+    <div>
+    <Header />
     <div className="h-screen w-full flex items-center justify-center relative">
+      <div>
+      <img
+          src="https://assets.nflxext.com/ffe/siteui/vlv3/e3e9c31f-aa15-4a8f-8059-04f01e6b8629/web/IN-en-20250113-TRIFECTA-perspective_febfa442-23d9-45f3-937e-72f8b971f7a9_large.jpg"
+          alt="background-image"
+          className="absolute top-0 left-0 w-full h-full object-cover"
+        />
+      </div>
       <div className="z-10 w-full max-w-md">
         <form
           onSubmit={(e) => e.preventDefault()}
@@ -94,12 +107,13 @@ const Login = () => {
           </button>
           <p className="cursor-pointer" onClick={handleClick}>
             {isSignIn == true
-              ? "New to Netflix? Sign up now."
-              : "Already Registered? Sign In"}
+              ? <span><span className="cursor-default">New to Netflix?</span>{" "}<span className="font-bold">Sign up now.</span></span>
+              : <span><span className="cursor-default">Already Registered?</span>{" "}<span className="font-bold">Sign In</span></span>}
           </p>
         </form>
       </div>
     </div>
+   </div>
   );
 };
 
